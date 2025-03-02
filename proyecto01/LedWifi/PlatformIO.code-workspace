@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "../.."
+		},
+		{
+			"name": "LedWifi",
+			"path": "."
+		},
+		{
+			"name": "blink",
+			"path": "../../blink"
+		}
+	],
+	"settings": {}
+}

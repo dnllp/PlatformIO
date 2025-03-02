@@ -2,8 +2,8 @@
 #include <WiFi.h>
 #include <WebServer.h>
 
-const char* ssid = "TuSSID"; // Replace con tu SSID de Wi-Fi
-const char* password = "pass"; // replace con tu password de Wi-Fi
+const char* ssid = "eiros"; // Replace con tu SSID de Wi-Fi
+const char* password = "338760f6bc"; // replace con tu password de Wi-Fi
 
 WebServer server(80);
 const int ledPin = 2;
@@ -29,7 +29,7 @@ void handleLedOff() {
 void setup() {
   pinMode(ledPin, OUTPUT);
   digitalWrite(ledPin, LOW);
-  Serial.begin(115200);
+  Serial.begin(9600);
 
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
