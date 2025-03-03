@@ -2,14 +2,15 @@
 #include <WiFi.h>
 #include <WebServer.h>
 
-const char* ssid = "eiros"; // Replace con tu SSID de Wi-Fi
-const char* password = "338760f6bc"; // replace con tu password de Wi-Fi
+const char* ssid = "UAM-ROBOTICA"; // Replace con tu SSID de Wi-Fi
+const char* password = "m4nt32024uat"; // replace con tu password de Wi-Fi
 
 WebServer server(80);
 const int ledPin = 2;
 
 void handleRoot() {
-  String html = "<html><body><h1>Control de LED</h1>";
+  String html = "<html><body><h1>Control de LED con WiFi</h1>";
+  html += "<h2>Programacion de Interfaces y Puertos</h2>";
   html += "<a href='/led/on'><button>Turn On LED</button></a><br>";
   html += "<a href='/led/off'><button>Turn Off LED</button></a>";
   html += "</body></html>";
