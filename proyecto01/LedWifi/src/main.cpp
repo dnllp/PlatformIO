@@ -13,6 +13,7 @@ void handleRoot() {
   html += "<h2>Programacion de Interfaces y Puertos</h2>";
   html += "<a href='/led/on'><button>Turn On LED</button></a><br>";
   html += "<a href='/led/off'><button>Turn Off LED</button></a>";
+  html += "<p> Nombre de los integrantes: </p>";
   html += "</body></html>";
   server.send(200, "text/html", html);
 }
