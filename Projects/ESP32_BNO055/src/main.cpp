@@ -5,7 +5,7 @@
 #include <utility/imumaths.h>
 
 // El sensor usa la dirección 0x28 por defecto (o 0x29 si el pin ADR está en alto)
-Adafruit_BNO055 bno = Adafruit_BNO055(55, 0x28);
+Adafruit_BNO055 bno = Adafruit_BNO055(55, 0x29);
 
 void setup() {
   Serial.begin(115200);
