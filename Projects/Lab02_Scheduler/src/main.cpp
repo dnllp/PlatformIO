@@ -37,15 +37,39 @@ void taskWatchdog(void* p) {
  
 TaskHandle_t hBaja = NULL;
 TaskHandle_t hAlta = NULL;
+
+void printTaskStats() {
+    Serial.printf("%-16s %5s %5s %4s\n", "Nombre", "Prio", "Stack", "Core");
+    Serial.println("------------------------------------");
+
+    // Lista de handles conocidos — agrega los tuyos
+    struct { TaskHandle_t h; const char* name; } tasks[] = {
+        { hAlta,  "Alta"  },
+        { hBaja,  "Baja"  },
+        { NULL,   NULL    }
+    };
+
+    for (int i = 0; tasks[i].name != NULL; i++) {
+        if (tasks[i].h == NULL) continue;
+        Serial.printf("%-16s %5u %5u\n",
+            tasks[i].name,
+            uxTaskPriorityGet(tasks[i].h),
+            uxTaskGetStackHighWaterMark(tasks[i].h)
+        );
+    }
+}
  
 // Tarea de diagnostico — imprime stats de todas las tareas
+
+
 void taskStats(void* p) {
     static char buf[512];
     for (;;) {
-        vTaskList(buf);        // Requiere configUSE_TRACE_FACILITY=1
+        //vTaskList(buf);        // Requiere configUSE_TRACE_FACILITY=1
         Serial.println("\n--- ESTADO DE TAREAS ---");
         Serial.println("Nombre          Estado  Prio  Stack  Num");
-        Serial.println(buf);
+        //Serial.println(buf);
+        printTaskStats();
         vTaskDelay(pdMS_TO_TICKS(5000));
     }
 }

@@ -37,6 +37,7 @@ void taskHeartbeat(void* param) {
     const int LED = 2;
     pinMode(LED, OUTPUT);
     for (;;) {
+        Serial.println("[Heartbeat] LED toggled");
         digitalWrite(LED, !digitalRead(LED));
         vTaskDelay(pdMS_TO_TICKS(500));
     }
