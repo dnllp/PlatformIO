@@ -7,9 +7,7 @@ TaskHandle_t hTaskHeartbeat = NULL;
  
 // ── Tarea 1: lectura de sensor (core 1, prioridad 2) ───
 void taskSensor(void* param) {
-    Serial.printf("[Sensor]    Core %d  Prio %d\n",
-                  xPortGetCoreID(),
-                  uxTaskPriorityGet(NULL));
+    Serial.printf("[Sensor]    Core %d  Prio %d\n", xPortGetCoreID(), uxTaskPriorityGet(NULL));
     uint32_t count = 0;
     for (;;) {
         // Simular lectura de sensor (200 ms)
@@ -20,9 +18,7 @@ void taskSensor(void* param) {
 
 // ── Tarea 2: actualizar display (core 1, prioridad 1) ──
 void taskDisplay(void* param) {
-    Serial.printf("[Display]   Core %d  Prio %d\n",
-                  xPortGetCoreID(),
-                  uxTaskPriorityGet(NULL));
+    Serial.printf("[Display]   Core %d  Prio %d\n", xPortGetCoreID(), uxTaskPriorityGet(NULL));
     for (;;) {
         Serial.println("[Display]   Actualizando pantalla...");
         vTaskDelay(pdMS_TO_TICKS(500));
@@ -31,9 +27,7 @@ void taskDisplay(void* param) {
  
 // ── Tarea 3: LED heartbeat (core 0, prioridad 1) ───────
 void taskHeartbeat(void* param) {
-    Serial.printf("[Heartbeat] Core %d  Prio %d\n",
-                  xPortGetCoreID(),
-                  uxTaskPriorityGet(NULL));
+    Serial.printf("[Heartbeat] Core %d  Prio %d\n", xPortGetCoreID(), uxTaskPriorityGet(NULL));
     const int LED = 2;
     pinMode(LED, OUTPUT);
     for (;;) {
