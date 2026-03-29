@@ -56,25 +56,25 @@ void loop() {
     // 1. Avanzar
     Serial.printf("[SMR-S3] Avanzando  — speed: %d\n", SPEED_MED);
     robot.forward(SPEED_MED);
-    delay(2000);
+    delay(8000);
 
     // 2. Girar a la derecha
     Serial.printf("[SMR-S3] Girando derecha — speed: %d\n", SPEED_LOW);
     robot.turnRight(SPEED_LOW);
-    delay(1000);
+    delay(4000);
 
     // 3. Retroceder
     Serial.printf("[SMR-S3] Retrocediendo — speed: %d\n", SPEED_MED);
     robot.backward(SPEED_MED);
-    delay(1000);
+    delay(4000);
 
     // 4. Girar a la izquierda
     Serial.printf("[SMR-S3] Girando izquierda — speed: %d\n", SPEED_LOW);
     robot.turnLeft(SPEED_LOW);
-    delay(1000);
+    delay(4000);
 
     // 5. Parar y esperar
     Serial.println("[SMR-S3] Detenido — esperando 2s...");
     robot.stop();
-    delay(2000);
+    delay(8000);
 }
