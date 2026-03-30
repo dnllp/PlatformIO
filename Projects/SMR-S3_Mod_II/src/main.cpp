@@ -49,8 +49,8 @@ static constexpr gpio_num_t RIGHT_ENC_B = GPIO_NUM_35;
 // Resolución del encoder: pulsos por revolución (PPR)
 // En modo cuadratura x4: PPR_FISICO × 4
 // Ejemplo: encoder de 20 ranuras × 4 = 80 PPR efectivos
-static constexpr uint16_t PPR          = 80;
-static constexpr float    WHEEL_DIAM   = 6.5f;   // cm
+static constexpr uint16_t PPR          = 341;
+static constexpr float    WHEEL_DIAM   = 6.0f;   // cm
 
 // Parámetros PID — sintonizar según la respuesta real del robot
 // Punto de partida: Kp alto, Ki bajo, Kd=0 → luego ajustar
