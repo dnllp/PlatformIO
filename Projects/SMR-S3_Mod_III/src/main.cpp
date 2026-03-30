@@ -48,8 +48,8 @@ static constexpr gpio_num_t LEFT_ENC_A  = GPIO_NUM_36;
 static constexpr gpio_num_t LEFT_ENC_B  = GPIO_NUM_39;
 static constexpr gpio_num_t RIGHT_ENC_A = GPIO_NUM_34;
 static constexpr gpio_num_t RIGHT_ENC_B = GPIO_NUM_35;
-static constexpr uint16_t   PPR         = 80;
-static constexpr float      WHEEL_DIAM  = 6.5f;  // cm
+static constexpr uint16_t   PPR         = 341;
+static constexpr float      WHEEL_DIAM  = 6.0f;  // cm
 
 // ── Sensores Ultrasónicos HC-SR04 ────────────────────────────
 // Sensor frontal (obligatorio)
