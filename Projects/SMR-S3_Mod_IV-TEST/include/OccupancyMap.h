@@ -33,10 +33,10 @@
 #include <math.h>
 
 // ── Parámetros del mapa ──────────────────────────────────────
-// Mapa de 200×200 celdas a 5 cm/celda = 10×10 metros
-// Memoria: 200×200 = 40 000 bytes ≈ 40 KB (cabe en RAM interna)
-static constexpr uint16_t MAP_WIDTH_CELLS  = 200;
-static constexpr uint16_t MAP_HEIGHT_CELLS = 200;
+// Mapa de 600×600 celdas a 5 cm/celda = 30×30 metros
+// Memoria: 600×600 = 360 000 bytes ≈ 360 KB (cabe en PSRAM)
+static constexpr uint16_t MAP_WIDTH_CELLS  = 600;
+static constexpr uint16_t MAP_HEIGHT_CELLS = 600;
 static constexpr float    CELL_SIZE_CM     = 5.0f;   // cm por celda
 
 // Valores de celda

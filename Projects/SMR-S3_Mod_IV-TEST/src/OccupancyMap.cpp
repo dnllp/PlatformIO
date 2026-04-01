@@ -21,20 +21,26 @@ OccupancyMap::OccupancyMap() : _grid(nullptr), _ready(false) {}
 bool OccupancyMap::init() {
     size_t mapSize = (size_t)MAP_WIDTH_CELLS * MAP_HEIGHT_CELLS;
 
-    // Sin PSRAM: asignar directamente en RAM interna
-    // Con MAP_WIDTH=200 x MAP_HEIGHT=200 = 40 KB — cabe con margen
-    _grid = static_cast<uint8_t*>(malloc(mapSize));
+    // Intentar asignar en PSRAM primero (ESP32-S3 tiene 8 MB)
+    _grid = static_cast<uint8_t*>(
+        heap_caps_malloc(mapSize, MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT));
 
     if (!_grid) {
-        ESP_LOGE(TAG, "Sin memoria para el mapa (%u bytes libres).",
-                 (unsigned)ESP.getFreeHeap());
+        // Fallback a heap interno (RAM limitada ~300 KB libres)
+        ESP_LOGW(TAG, "PSRAM no disponible, usando RAM interna.");
+        _grid = static_cast<uint8_t*>(malloc(mapSize));
+    }
+
+    if (!_grid) {
+        ESP_LOGE(TAG, "No hay memoria suficiente para el mapa (%u bytes).", mapSize);
         return false;
     }
 
+    // Inicializar todo como desconocido
     memset(_grid, CELL_UNKNOWN, mapSize);
     _ready = true;
 
-    ESP_LOGI(TAG, "Mapa %.0f x %.0f m inicializado (%u KB en RAM interna).",
+    ESP_LOGI(TAG, "Mapa %.0f x %.0f m inicializado (%u KB).",
              WIDTH_CM / 100.0f, HEIGHT_CM / 100.0f,
              (unsigned)(mapSize / 1024));
     return true;
