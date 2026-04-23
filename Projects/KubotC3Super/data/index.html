@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <title>Dashboard Kubot C3 Pro | UAT</title>
+</head>
+<body>
+    <header>
+        <h1>UAM Mante - Amor por la Ciencia</h1>
+        <p>Monitoreo de Telemetría Real-Time</p>
+    </header>
+
+    <div class="card">
+        <h3>Orientación (BNO055)</h3>
+        <p style="font-size: 2rem; color: var(--uat-azul);"><span id="yaw">0</span>°</p>
+        <p>Estado: <span id="imu-status">Calibrando...</span></p>
+    </div>
+
+    <div class="card">
+        <h3>Sensor de Color</h3>
+        <div id="color-indicator"></div>
+        <p>Detección: <span id="color-name">Buscando...</span></p>
+        <button class="btn-calibrar" onclick="calibrar()">Calibrar Blanco</button>
+    </div>
+
+    <div class="card">
+        <h3>Control de Tracción</h3>
+        <p>PWM Motores: <span id="pwm">0</span></p>
+        <p>Modo: <span id="mode">Autónomo</span></p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
