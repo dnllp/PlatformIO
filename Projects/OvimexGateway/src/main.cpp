@@ -65,7 +65,7 @@ Adafruit_SSD1306 display(SCREEN_W, SCREEN_H, &Wire, OLED_RST);
 
 // ── LED y Buzzer ───────────────────────────────────────────
 #define LED_PIN      2     // LED azul integrado
-#define BUZZER_PIN   13    // Buzzer externo
+#define BUZZER_PIN   13    // Buzzer externo con NPN
 
 // ── Estado global ──────────────────────────────────────────
 WebSocketsClient wsClient;
