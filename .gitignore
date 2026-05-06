@@ -3,3 +3,4 @@ Projects/ControlMotorDC/ESP32_MotorDC_v1_Encoder/include/README
 Projects/ControlMotorDC/ESP32_MotorDC_v1_Encoder/lib/README
 Projects/ControlMotorDC/ESP32_MotorDC_v1_Encoder/test/README
 Projects/ControlMotorDC/ESP32_MotorDC_v1_Encoder/.gitignore
+PIP_LabTk
