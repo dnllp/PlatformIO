@@ -37,7 +37,7 @@
 #include <Adafruit_SSD1306.h>
 
 // ── Wi-Fi ──────────────────────────────────────────────────
-const char* WIFI_SSID = "UAM-ROBOTICA";
+const char* WIFI_SSID = "UAM-ROBOTICA"; 
 const char* WIFI_PASS = "m4nt32024uat";
 
 // ── Servidor Python ────────────────────────────────────────
