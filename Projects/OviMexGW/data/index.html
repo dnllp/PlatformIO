@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GeoFence Monitor</title>
+<title>OVIMEX Cercado Virtual</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -337,7 +337,7 @@ select:focus, input:focus { border-color: var(--accent); }
 <!-- Audio unlock (navegadores modernos requieren interacción) -->
 <div id="audio-unlock">
   <img src="logo.png" style="width:180px; margin-bottom:16px; filter: drop-shadow(0 0 12px #00e5ff);">
-  <h2>OVIMEX MONITOR</h2>
+  <h2>OVIMEX Cercado Virtual</h2>
   <p>Haz clic para iniciar el sistema de alertas</p>
   <button class="btn btn-primary" style="font-size:16px;padding:12px 32px;" onclick="unlockAudio()">
     INICIAR SISTEMA
@@ -349,7 +349,7 @@ select:focus, input:focus { border-color: var(--accent); }
 
 <!-- HEADER -->
 <header>
-  <div class="logo">OVI<span>MEX</span> MONITOR</div>
+  <div class="logo">OVI<span>MEX</span> Cercado Virtual</div>
   <div class="header-status">
     <div class="ws-indicator">
       <div class="ws-dot" id="ws-dot"></div>
@@ -363,7 +363,7 @@ select:focus, input:focus { border-color: var(--accent); }
 <aside>
   <div class="sidebar-tabs">
     <button class="tab-btn active" onclick="switchTab('nodes')">NODOS</button>
-    <button class="tab-btn" onclick="switchTab('geofence')">GEOFENCE</button>
+    <button class="tab-btn" onclick="switchTab('geofence')">CERCADO</button>
     <button class="tab-btn" onclick="switchTab('alertas')">ALERTAS</button>
     <button class="tab-btn" onclick="switchTab('historial')">HISTORIAL</button>
   </div>
@@ -380,7 +380,7 @@ select:focus, input:focus { border-color: var(--accent); }
 
   <!-- TAB: GEOFENCE -->
   <div id="tab-geofence" class="tab-content">
-    <div class="section-label">Configuración de geofence</div>
+    <div class="section-label">Configuración de cercado</div>
 
     <div class="ctrl-group">
       <label>Asignar a nodo</label>
@@ -390,7 +390,7 @@ select:focus, input:focus { border-color: var(--accent); }
     </div>
 
     <div class="ctrl-group">
-      <label>Tipo de geofence</label>
+      <label>Tipo de cercado</label>
       <select id="gf-type" onchange="onGfTypeChange()">
         <option value="circle">Círculo</option>
         <option value="polygon">Polígono</option>
