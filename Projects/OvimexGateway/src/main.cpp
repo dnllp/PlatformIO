@@ -35,14 +35,15 @@
 #include <ArduinoJson.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
+#include "soc/rtc_cntl_reg.h"
 
 // ── Wi-Fi ──────────────────────────────────────────────────
 const char* WIFI_SSID = "UAM-ROBOTICA"; 
 const char* WIFI_PASS = "m4nt32024uat";
 
 // ── Servidor Python ────────────────────────────────────────
-const char* WS_HOST  = "192.168.200.106";  // IP de tu PC
-const uint16_t WS_PORT = 8765;
+const char* WS_HOST  = "192.168.200.136";  // IP de tu PC
+const uint16_t WS_PORT = 8766;
 const char* WS_PATH  = "/gateway";
 
 // ── LoRa SX1276 — pines LILYGO LoRa32 V1.3 ────────────────
@@ -380,6 +381,7 @@ void connectWiFi() {
 //  SETUP
 // ═══════════════════════════════════════════════════════════
 void setup() {
+    WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); // Deshabilitar brownout detector
     Serial.begin(115200);
     while (!Serial) delay(10);
     delay(300);
@@ -411,6 +413,8 @@ void setup() {
         wsClient.begin(WS_HOST, WS_PORT, WS_PATH);
         wsClient.onEvent(onWsEvent);
         wsClient.setReconnectInterval(3000);
+        wsClient.enableHeartbeat(15000, 3000, 2);
+        wsClient.setExtraHeaders("Origin: http://localhost");
     }
 
     Serial.println("[GATEWAY V1.3] Listo");
