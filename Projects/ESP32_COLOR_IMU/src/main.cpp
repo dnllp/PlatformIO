@@ -48,6 +48,7 @@
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BNO055.h>
 #include <utility/imumaths.h>
+#include <Preferences.h>
 
 // ════════════════════════════════════════════════════════════
 //  PINES
@@ -92,9 +93,9 @@
 #define PARPADEO_MS      150
 
 // ── Velocidades ───────────────────────────────────────────────
-#define VEL_DEFECTO      178    // ~70 % de 255
-#define VEL_MAXIMA       255    // 100 %
-#define VEL_GIRO_LENTO    76    // ~30 % para frenado suave
+#define VEL_DEFECTO      70    // ~70 % de 255
+#define VEL_MAXIMA       120    // 100 %
+#define VEL_GIRO_LENTO    50    // ~30 % para frenado suave
 
 // ── Corrección de avance (proporcional sobre yaw) ─────────────
 #define KP_AVANCE       1.8f   // ganancia proporcional
@@ -111,7 +112,10 @@ Adafruit_TCS34725 tcs = Adafruit_TCS34725(
     TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X);
 
 Adafruit_BNO055 bno = Adafruit_BNO055(55, 0x28);
-
+// ════════════════════════════════════════════════════════════
+//  COLORES PERSISTENTES
+// ════════════════════════════════════════════════════════════
+Preferences prefs;
 // ════════════════════════════════════════════════════════════
 //  ESTADO GLOBAL
 // ════════════════════════════════════════════════════════════
@@ -161,6 +165,8 @@ void    avanzarConIMU();
 ColorRGB leerColorPromedio();
 int8_t   buscarColorMasCercano(ColorRGB muestra);
 float    distanciaRGB(ColorRGB a, ColorRGB b);
+void guardarColores();
+void cargarColores();
 
 // Lógica principal
 void manejarBoton();
@@ -204,7 +210,7 @@ void setup() {
     }
     bno.setExtCrystalUse(true);
     Serial.println(F("[OK] BNO055 listo (0x28)"));
-
+    cargarColores();
     Serial.println(F("\n── Instrucciones ──────────────────────────"));
     Serial.println(F("  Mantener boton 2 s  → CALIBRACION"));
     Serial.println(F("  Pulsar boton 1 vez  → DETECCION"));
@@ -343,8 +349,10 @@ void modoCalibracion() {
     Serial.println(F("\n[OK] 8 colores calibrados. Pulsa el boton para detectar.\n"));
     delay(2000);
     apagarLed();
+    guardarColores(); 
     estadoActual = ESPERA;
 }
+
 
 // ════════════════════════════════════════════════════════════
 //  COMPORTAMIENTO POR COLOR
@@ -419,6 +427,39 @@ void ejecutarComportamiento(uint8_t idx) {
         default:
             frenar();
             break;
+    }
+}
+
+void guardarColores() {
+    prefs.begin("colores", false);   // namespace "colores", modo escritura
+    prefs.putUChar("total", totalCalibrados);
+    for (uint8_t i = 0; i < totalCalibrados; i++) {
+        char clave[8];
+        snprintf(clave, sizeof(clave), "r%d", i); prefs.putUChar(clave, coloresCal[i].r);
+        snprintf(clave, sizeof(clave), "g%d", i); prefs.putUChar(clave, coloresCal[i].g);
+        snprintf(clave, sizeof(clave), "b%d", i); prefs.putUChar(clave, coloresCal[i].b);
+    }
+    prefs.end();
+    Serial.println(F("[NVS] Colores guardados en flash."));
+}
+
+void cargarColores() {
+    prefs.begin("colores", true);    // modo solo lectura
+    totalCalibrados = prefs.getUChar("total", 0);
+    for (uint8_t i = 0; i < totalCalibrados; i++) {
+        char clave[8];
+        snprintf(clave, sizeof(clave), "r%d", i); coloresCal[i].r = prefs.getUChar(clave, 0);
+        snprintf(clave, sizeof(clave), "g%d", i); coloresCal[i].g = prefs.getUChar(clave, 0);
+        snprintf(clave, sizeof(clave), "b%d", i); coloresCal[i].b = prefs.getUChar(clave, 0);
+    }
+    prefs.end();
+
+    if (totalCalibrados > 0) {
+        Serial.print(F("[NVS] "));
+        Serial.print(totalCalibrados);
+        Serial.println(F(" colores recuperados del flash."));
+    } else {
+        Serial.println(F("[NVS] Sin colores previos almacenados."));
     }
 }
 
