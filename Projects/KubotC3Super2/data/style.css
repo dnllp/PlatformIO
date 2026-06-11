@@ -1,0 +1,579 @@
+/**
+ * style.css — Dashboard Kubot C3 Pro
+ * ====================================
+ * Estética: Industrial/técnica oscura.
+ * Paleta: Azul UAT profundo + naranja UAT + fondo casi negro.
+ * Tipografía: Exo 2 (display) + Share Tech Mono (datos numéricos).
+ *
+ * MEJORAS RESPECTO A LA VERSIÓN ANTERIOR:
+ *   - Tema oscuro profesional (más legible en ambientes de laboratorio)
+ *   - Variables CSS extendidas para colores de estado
+ *   - Grid responsivo (1 columna en móvil, 3 en escritorio)
+ *   - Animaciones de entrada para las tarjetas
+ *   - Estilos para brújula, gauge SVG, barras RGB, log de eventos
+ *   - Badge de estado WebSocket en el header
+ *   - Botón STOP con estilo de emergencia
+ */
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   VARIABLES GLOBALES
+───────────────────────────────────────────────────────────────────────────── */
+:root {
+    /* Colores corporativos UAT */
+    --uat-azul:     #002D56;
+    --uat-naranja:  #F47920;
+
+    /* Paleta de la interfaz */
+    --bg-page:      #0d1117;   /* Fondo principal casi negro */
+    --bg-card:      #161b22;   /* Fondo de tarjetas */
+    --bg-card-alt:  #1c2330;   /* Tarjeta alternativa (hover) */
+    --border:       #30363d;   /* Bordes sutiles */
+    --text-primary: #e6edf3;   /* Texto principal */
+    --text-muted:   #8b949e;   /* Texto secundario */
+    --accent:       #F47920;   /* Naranja UAT como acento */
+    --accent-glow:  rgba(244, 121, 32, 0.25);
+
+    /* Colores de estado */
+    --color-ok:     #3fb950;   /* Verde éxito */
+    --color-warn:   #d29922;   /* Amarillo advertencia */
+    --color-error:  #f85149;   /* Rojo error */
+    --color-info:   #58a6ff;   /* Azul info */
+
+    /* Colores del gauge de velocidad */
+    --color-stop:   #f85149;
+    --color-slow:   #d29922;
+    --color-fast:   #3fb950;
+
+    /* Tipografía */
+    --font-display: 'Exo 2', sans-serif;
+    --font-mono:    'Share Tech Mono', monospace;
+
+    /* Espaciado */
+    --radius:       10px;
+    --gap:          16px;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   RESET Y BASE
+───────────────────────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-display);
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   HEADER
+───────────────────────────────────────────────────────────────────────────── */
+header {
+    background: linear-gradient(135deg, var(--uat-azul) 0%, #001a33 100%);
+    border-bottom: 3px solid var(--uat-naranja);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.header-logo svg {
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+}
+
+.header-text h1 {
+    font-size: 1.4rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    color: #fff;
+    text-transform: uppercase;
+}
+
+.header-text p {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.55);
+    font-family: var(--font-mono);
+    letter-spacing: 0.04em;
+}
+
+/* Badge de estado WebSocket */
+.ws-badge {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 5px 12px;
+}
+
+.ws-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.dot-on   { background: var(--color-ok);   box-shadow: 0 0 6px var(--color-ok); animation: pulse 2s infinite; }
+.dot-wait { background: var(--color-warn); box-shadow: 0 0 6px var(--color-warn); animation: pulse 0.8s infinite; }
+.dot-off  { background: var(--color-error); }
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.4; }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   CONTENIDO PRINCIPAL
+───────────────────────────────────────────────────────────────────────────── */
+main {
+    flex: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px var(--gap);
+    width: 100%;
+}
+
+/* Grid de 3 columnas (colapsa a 1 en móvil) */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--gap);
+    margin-bottom: var(--gap);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   TARJETAS
+───────────────────────────────────────────────────────────────────────────── */
+.card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    animation: slideUp 0.4s ease both;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 20px var(--accent-glow);
+}
+
+/* Tarjeta ancha (log) ocupa el ancho completo */
+.card-wide {
+    width: 100%;
+    align-items: stretch;
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Animaciones de entrada escalonadas */
+#card-imu    { animation-delay: 0.05s; }
+#card-color  { animation-delay: 0.10s; }
+#card-motors { animation-delay: 0.15s; }
+#card-log    { animation-delay: 0.20s; }
+
+/* Encabezado de tarjeta */
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+}
+
+.card-header h3 {
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    flex: 1;
+}
+
+.card-icon {
+    font-size: 1.1rem;
+    color: var(--accent);
+}
+
+/* Chip de etiqueta */
+.chip {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    padding: 2px 8px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    background: rgba(255,255,255,0.04);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.chip-red   { border-color: var(--color-error); color: var(--color-error); background: rgba(248,81,73,0.1); }
+.chip-green { border-color: var(--color-ok);    color: var(--color-ok);    background: rgba(63,185,80,0.1); }
+
+/* Valor grande (yaw) */
+.big-value {
+    font-family: var(--font-mono);
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+}
+
+.big-value .unit {
+    font-size: 1.5rem;
+    color: var(--text-muted);
+    margin-left: 2px;
+}
+
+.sub-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   BRÚJULA
+───────────────────────────────────────────────────────────────────────────── */
+.compass-wrap {
+    position: relative;
+    width: 110px;
+    height: 110px;
+}
+
+.compass-ring {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    background: radial-gradient(circle, #1e2530 0%, var(--bg-card) 100%);
+    position: relative;
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.5), 0 0 10px var(--accent-glow);
+}
+
+/* Aguja de la brújula */
+.compass-needle {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 4px;
+    height: 44px;
+    background: linear-gradient(to bottom, var(--color-error) 50%, var(--text-muted) 50%);
+    border-radius: 2px;
+    transform-origin: bottom center;
+    transform: translate(-50%, -100%) rotate(0deg);
+    transition: transform 0.3s ease;
+}
+
+/* Punto central */
+.compass-ring::after {
+    content: '';
+    position: absolute;
+    left: 50%; top: 50%;
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+}
+
+/* Etiquetas N/S/E/O */
+.compass-label {
+    position: absolute;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    font-weight: bold;
+    color: var(--text-muted);
+}
+
+.compass-label.n { top: 4px;    left: 50%; transform: translateX(-50%); color: var(--color-error); }
+.compass-label.s { bottom: 4px; left: 50%; transform: translateX(-50%); }
+.compass-label.e { right: 4px;  top: 50%;  transform: translateY(-50%); }
+.compass-label.w { left: 4px;   top: 50%;  transform: translateY(-50%); }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   SENSOR DE COLOR
+───────────────────────────────────────────────────────────────────────────── */
+#color-indicator {
+    width: 100%;
+    height: 60px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background-color: #333;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+}
+
+/* Barras RGB */
+.rgb-bars {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.bar-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--text-muted);
+}
+
+.bar-row > span:first-child {
+    width: 12px;
+    text-align: right;
+    font-weight: bold;
+}
+
+.bar-row > span:last-child {
+    width: 28px;
+    text-align: right;
+}
+
+.bar-track {
+    flex: 1;
+    height: 8px;
+    background: rgba(255,255,255,0.07);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.bar-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.bar-r { background: linear-gradient(to right, #5c1010, var(--color-error)); }
+.bar-g { background: linear-gradient(to right, #0d3b1b, var(--color-ok)); }
+.bar-b { background: linear-gradient(to right, #0a1f3e, var(--color-info)); }
+
+.detection-label {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   GAUGE SVG (PWM)
+───────────────────────────────────────────────────────────────────────────── */
+.gauge-wrap {
+    position: relative;
+    width: 120px;
+    height: 120px;
+}
+
+.gauge-svg {
+    width: 100%;
+    height: 100%;
+}
+
+/* Pista de fondo del gauge */
+.gauge-track {
+    fill: none;
+    stroke: rgba(255,255,255,0.07);
+    stroke-width: 10;
+    stroke-linecap: round;
+}
+
+/* Arco animado del gauge */
+.gauge-arc {
+    fill: none;
+    stroke: var(--color-fast);
+    stroke-width: 10;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.4s ease, stroke 0.4s ease;
+}
+
+/* Valor numérico centrado dentro del gauge */
+.gauge-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+}
+
+.gauge-center span {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: var(--text-primary);
+    line-height: 1;
+}
+
+.gauge-center small {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   BOTONES
+───────────────────────────────────────────────────────────────────────────── */
+.btn-calibrar {
+    background: transparent;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 8px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+    transition: background 0.2s, box-shadow 0.2s;
+}
+
+.btn-calibrar:hover {
+    background: var(--accent-glow);
+    box-shadow: 0 0 10px var(--accent-glow);
+}
+
+/* Botón STOP de emergencia */
+.btn-stop {
+    background: rgba(248, 81, 73, 0.12);
+    color: var(--color-error);
+    border: 1px solid var(--color-error);
+    padding: 10px 24px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 0.9rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: background 0.2s, box-shadow 0.2s;
+    width: 100%;
+}
+
+.btn-stop:hover {
+    background: rgba(248, 81, 73, 0.3);
+    box-shadow: 0 0 14px rgba(248, 81, 73, 0.4);
+}
+
+.btn-stop:active {
+    background: rgba(248, 81, 73, 0.5);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   LOG DE EVENTOS
+───────────────────────────────────────────────────────────────────────────── */
+.card-wide .card-header {
+    margin-bottom: 4px;
+}
+
+.btn-clear {
+    margin-left: auto;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    padding: 3px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.72rem;
+    font-family: var(--font-display);
+    transition: border-color 0.2s;
+}
+
+.btn-clear:hover {
+    border-color: var(--text-muted);
+    color: var(--text-primary);
+}
+
+#log-box {
+    height: 160px;
+    overflow-y: auto;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    line-height: 1.6;
+    padding: 8px 4px;
+
+    /* Scrollbar discreta */
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+}
+
+#log-box::-webkit-scrollbar       { width: 4px; }
+#log-box::-webkit-scrollbar-track { background: transparent; }
+#log-box::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+.log-line {
+    padding: 2px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+}
+
+.log-ts {
+    color: var(--text-muted);
+    margin-right: 8px;
+}
+
+.log-ok    { color: var(--color-ok); }
+.log-warn  { color: var(--color-warn); }
+.log-error { color: var(--color-error); }
+.log-info  { color: var(--text-primary); }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   FOOTER
+───────────────────────────────────────────────────────────────────────────── */
+footer {
+    background: var(--uat-azul);
+    border-top: 2px solid var(--uat-naranja);
+    padding: 10px 20px;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 0.04em;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   RESPONSIVO — Móvil
+───────────────────────────────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+    .header-text h1 { font-size: 1rem; }
+    .ws-badge        { font-size: 0.7rem; }
+    .big-value       { font-size: 2.2rem; }
+    main             { padding: 12px 10px; }
+}

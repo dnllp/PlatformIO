@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <!-- Fuente técnica/industrial para un dashboard de robot -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Exo+2:wght@300;600;800&display=swap" rel="stylesheet">
+    <title>Dashboard Kubot C3 Pro | UAT Mante</title>
+</head>
+<body>
+
+    <!-- ===== ENCABEZADO ===== -->
+    <header>
+        <div class="header-inner">
+            <div class="header-logo">
+                <!-- Ícono SVG de robot inline para no depender de archivos externos -->
+                <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="10" y="14" width="20" height="16" rx="3" fill="var(--uat-naranja)"/>
+                    <rect x="15" y="8"  width="10" height="8"  rx="2" fill="var(--uat-naranja)"/>
+                    <circle cx="16" cy="20" r="3" fill="var(--uat-azul)"/>
+                    <circle cx="24" cy="20" r="3" fill="var(--uat-azul)"/>
+                    <rect x="13" y="27" width="4" height="6" rx="1" fill="var(--uat-naranja)"/>
+                    <rect x="23" y="27" width="4" height="6" rx="1" fill="var(--uat-naranja)"/>
+                    <line x1="5"  y1="20" x2="10" y2="20" stroke="var(--uat-naranja)" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="30" y1="20" x2="35" y2="20" stroke="var(--uat-naranja)" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <div class="header-text">
+                <h1>KUBOT C3 Pro</h1>
+                <p>UAT Mante &mdash; Telemetría en Tiempo Real</p>
+            </div>
+            <!-- Indicador de conexión WebSocket -->
+            <div class="ws-badge" id="ws-badge">
+                <span class="ws-dot" id="ws-dot"></span>
+                <span id="ws-label">Conectando...</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- ===== CONTENIDO PRINCIPAL ===== -->
+    <main>
+
+        <!-- FILA 1: Orientación + Color + Tracción -->
+        <div class="grid">
+
+            <!-- Tarjeta: BNO055 Orientación -->
+            <div class="card" id="card-imu">
+                <div class="card-header">
+                    <span class="card-icon">&#9732;</span> <!-- ⛶ brújula -->
+                    <h3>Orientación</h3>
+                    <span class="chip" id="imu-status">BNO055</span>
+                </div>
+
+                <!-- Brújula visual -->
+                <div class="compass-wrap">
+                    <div class="compass-ring">
+                        <div class="compass-needle" id="compass-needle"></div>
+                        <span class="compass-label n">N</span>
+                        <span class="compass-label s">S</span>
+                        <span class="compass-label e">E</span>
+                        <span class="compass-label w">O</span>
+                    </div>
+                </div>
+
+                <p class="big-value"><span id="yaw">0.0</span><span class="unit">°</span></p>
+                <p class="sub-label">Yaw (Heading)</p>
+            </div>
+
+            <!-- Tarjeta: TCS34725 Color -->
+            <div class="card" id="card-color">
+                <div class="card-header">
+                    <span class="card-icon">&#9678;</span>
+                    <h3>Sensor de Color</h3>
+                    <span class="chip" id="color-chip">TCS34725</span>
+                </div>
+
+                <!-- Muestra del color detectado -->
+                <div id="color-indicator"></div>
+
+                <!-- Barras RGB -->
+                <div class="rgb-bars">
+                    <div class="bar-row">
+                        <span>R</span>
+                        <div class="bar-track"><div class="bar-fill bar-r" id="bar-r"></div></div>
+                        <span id="val-r">0</span>
+                    </div>
+                    <div class="bar-row">
+                        <span>G</span>
+                        <div class="bar-track"><div class="bar-fill bar-g" id="bar-g"></div></div>
+                        <span id="val-g">0</span>
+                    </div>
+                    <div class="bar-row">
+                        <span>B</span>
+                        <div class="bar-track"><div class="bar-fill bar-b" id="bar-b"></div></div>
+                        <span id="val-b">0</span>
+                    </div>
+                </div>
+
+                <p class="detection-label">&#9632; <span id="color-name">Buscando...</span></p>
+                <button class="btn-calibrar" onclick="calibrar()">&#9965; Calibrar Blanco</button>
+            </div>
+
+            <!-- Tarjeta: Motores / Tracción -->
+            <div class="card" id="card-motors">
+                <div class="card-header">
+                    <span class="card-icon">&#9881;</span>
+                    <h3>Tracción</h3>
+                    <span class="chip" id="mode">Autónomo</span>
+                </div>
+
+                <!-- Gauge circular de PWM -->
+                <div class="gauge-wrap">
+                    <svg class="gauge-svg" viewBox="0 0 120 120">
+                        <!-- Pista de fondo -->
+                        <circle class="gauge-track" cx="60" cy="60" r="50"
+                                stroke-dasharray="251.2" stroke-dashoffset="0"/>
+                        <!-- Arco de valor -->
+                        <circle class="gauge-arc" id="gauge-arc" cx="60" cy="60" r="50"
+                                stroke-dasharray="251.2" stroke-dashoffset="251.2"
+                                transform="rotate(-90 60 60)"/>
+                    </svg>
+                    <div class="gauge-center">
+                        <span id="pwm">0</span>
+                        <small>/255</small>
+                    </div>
+                </div>
+
+                <p class="sub-label">PWM Motores</p>
+
+                <!-- Botón de parada de emergencia -->
+                <button class="btn-stop" onclick="enviarComando('stop')">&#9724; STOP</button>
+            </div>
+
+        </div><!-- /grid -->
+
+        <!-- FILA 2: Log de eventos -->
+        <div class="card card-wide" id="card-log">
+            <div class="card-header">
+                <span class="card-icon">&#9741;</span>
+                <h3>Log de Eventos</h3>
+                <button class="btn-clear" onclick="limpiarLog()">Limpiar</button>
+            </div>
+            <div id="log-box"></div>
+        </div>
+
+    </main>
+
+    <footer>
+        <p>UAT Mante &bull; Ingeniería Mecatrónica &bull; <span id="clock">--:--:--</span></p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
